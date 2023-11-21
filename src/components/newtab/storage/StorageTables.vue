@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-6 flex">
+  <div v-if="store.settings.dev" class="mt-6 flex">
     <ui-input
       v-model="state.query"
       :placeholder="t('common.search')"
@@ -38,7 +38,7 @@
       <template #item-modifiedAt="{ item }">
         {{ formatDate(item.modifiedAt) }}
       </template>
-      <template #item-actions="{ item }">
+      <template v-if="store.settings.dev" #item-actions="{ item }">
         <v-remixicon
           name="riDeleteBin7Line"
           class="cursor-pointer"
@@ -57,8 +57,10 @@ import { useDialog } from '@/composable/dialog';
 import { useWorkflowStore } from '@/stores/workflow';
 import { useLiveQuery } from '@/composable/liveQuery';
 import dbStorage from '@/db/storage';
+import { useStore } from '@/stores/main';
 import StorageEditTable from './StorageEditTable.vue';
 
+const store = useStore();
 const { t } = useI18n();
 const dialog = useDialog();
 const workflowStore = useWorkflowStore();
@@ -74,18 +76,25 @@ const tableHeaders = [
     filterable: true,
     text: t('common.name'),
     attrs: {
-      class: 'w-4/12',
       style: 'min-width: 120px',
     },
   },
   {
-    align: 'center',
-    value: 'createdAt',
-    text: t('storage.table.createdAt'),
+    value: 'label',
+    filterable: true,
+    text: '备注',
     attrs: {
-      style: 'min-width: 200px',
+      style: 'min-width: 120px',
     },
   },
+  // {
+  //   align: 'center',
+  //   value: 'createdAt',
+  //   text: t('storage.table.createdAt'),
+  //   attrs: {
+  //     style: 'min-width: 200px',
+  //   },
+  // },
   {
     align: 'center',
     value: 'modifiedAt',
@@ -111,7 +120,7 @@ const items = useLiveQuery(() => dbStorage.tablesItems.reverse().toArray());
 function formatDate(date) {
   return dayjs(date).format('DD MMM YYYY, hh:mm:ss A');
 }
-async function saveTable({ columns, name }) {
+async function saveTable({ columns, name, label }) {
   try {
     const columnsIndex = columns.reduce(
       (acc, column) => {
@@ -129,6 +138,7 @@ async function saveTable({ columns, name }) {
     const tableId = await dbStorage.tablesItems.add({
       rowsCount: 0,
       name,
+      label,
       createdAt: Date.now(),
       modifiedAt: Date.now(),
       columns,

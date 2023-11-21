@@ -12,11 +12,17 @@
         <ui-input
           v-model="state.name"
           class="-mt-1 w-full"
-          label="Table name"
-          placeholder="My table"
+          label="表名"
+          placeholder="输入表名"
+        />
+        <ui-input
+          v-model="state.label"
+          class="mt-1 w-full"
+          label="备注"
+          placeholder="输入备注"
         />
         <div class="mt-4 flex items-center">
-          <p class="flex-1">Columns</p>
+          <p class="flex-1">列</p>
           <ui-button icon :title="t('common.add')" @click="addColumn">
             <v-remixicon name="riAddLine" />
           </ui-button>
@@ -85,6 +91,10 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  label: {
+    type: String,
+    default: '',
+  },
   columns: {
     type: Array,
     default: () => [],
@@ -97,6 +107,7 @@ const { t } = useI18n();
 let changes = {};
 const state = reactive({
   name: '',
+  label: '',
   columns: [],
 });
 
@@ -164,6 +175,7 @@ watch(
     if (props.modelValue) {
       Object.assign(state, {
         name: `${props.name}`,
+        label: `${props.label}`,
         columns: cloneDeep(props.columns),
       });
     } else {

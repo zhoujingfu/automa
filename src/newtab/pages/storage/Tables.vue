@@ -6,6 +6,7 @@
       </h1>
       <div class="grow"></div>
       <ui-button
+        v-if="store.settings.dev"
         v-tooltip.group="'Clear data'"
         icon
         class="ml-2"
@@ -14,6 +15,7 @@
         <v-remixicon name="riFileShredLine" />
       </ui-button>
       <ui-button
+        v-if="store.settings.dev"
         v-tooltip="'Delete table'"
         icon
         class="ml-4 text-red-400 dark:text-red-300"
@@ -30,11 +32,15 @@
         class="mb-4 w-full md:mb-0 md:w-auto"
       />
       <div class="grow" />
-      <ui-button class="md:ml-4" @click="editTable">
+      <ui-button class="md:ml-4" @click="addRow">
+        <v-remixicon name="riAddLine" class="mr-2 -ml-1" />
+        <span>添加数据项</span>
+      </ui-button>
+      <ui-button v-if="store.settings.dev" class="md:ml-4" @click="editTable">
         <v-remixicon name="riPencilLine" class="mr-2 -ml-1" />
         <span>Edit table</span>
       </ui-button>
-      <ui-popover trigger-width class="ml-4">
+      <ui-popover v-if="store.settings.dev" trigger-width class="ml-4">
         <template #trigger>
           <ui-button variant="accent">
             <span>{{ t('log.exportData.title') }}</span>
@@ -64,21 +70,35 @@
         class="w-full"
       >
         <template #item-action="{ item }">
-          <v-remixicon
-            title="Delete row"
-            class="cursor-pointer"
-            name="riDeleteBin7Line"
-            @click="deleteRow(item)"
-          />
+          <span class="flex">
+            <v-remixicon
+              title="Edit row"
+              class="cursor-pointer mr-2"
+              name="riPencilLine"
+              @click="editRow(item)"
+            />
+            <v-remixicon
+              title="Delete row"
+              class="cursor-pointer"
+              name="riDeleteBin7Line"
+              @click="deleteRow(item)"
+            />
+          </span>
         </template>
       </ui-table>
     </div>
     <storage-edit-table
       v-model="editState.show"
       :name="editState.name"
+      :label="editState.label"
       :columns="editState.columns"
       @save="saveEditedTable"
     />
+    <storage-edit-row
+      v-model="editRowState.show"
+      :row-data="editRowState.rowData"
+      @save="saveEditRow"
+    ></storage-edit-row>
   </div>
 </template>
 <script setup>
@@ -91,9 +111,12 @@ import { useDialog } from '@/composable/dialog';
 import { objectHasKey } from '@/utils/helper';
 import { dataExportTypes } from '@/utils/shared';
 import StorageEditTable from '@/components/newtab/storage/StorageEditTable.vue';
+import StorageEditRow from '@/components/newtab/storage/StorageEditRow.vue';
 import dbStorage from '@/db/storage';
 import dataExporter from '@/utils/dataExporter';
+import { useStore } from '@/stores/main';
 
+const store = useStore();
 const { t } = useI18n();
 const route = useRoute();
 const dialog = useDialog();
@@ -118,14 +141,38 @@ const state = shallowReactive({
 });
 const editState = shallowReactive({
   name: '',
+  label: '',
   columns: [],
   show: false,
+});
+const editRowState = shallowReactive({
+  rowData: {},
+  show: false,
+  rowIndex: -1,
 });
 
 function editTable() {
   editState.name = tableDetail.value.name;
   editState.columns = tableDetail.value.columns;
+  editState.label = tableDetail.value.label;
   editState.show = true;
+}
+function addRow() {
+  const rowData = {};
+  const { columns } = tableDetail.value;
+  columns.forEach((column) => {
+    rowData[column.name] = '';
+  });
+  editRowState.rowData = rowData;
+  editRowState.rowIndex = -1;
+  editRowState.show = true;
+}
+function editRow(item) {
+  const rowIndex = table.value.body.findIndex(({ $$id }) => $$id === item.$$id);
+  const { items } = tableData.value;
+  editRowState.rowData = items[rowIndex];
+  editRowState.rowIndex = rowIndex;
+  editRowState.show = true;
 }
 function additionalHeaders(headers) {
   headers.unshift({ value: '$$id', text: '', sortable: false });
@@ -148,12 +195,13 @@ function exportData(type) {
     true
   );
 }
-async function saveEditedTable({ columns, name, changes }) {
+async function saveEditedTable({ columns, name, label, changes }) {
   const columnsChanges = Object.values(changes);
 
   try {
     await dbStorage.tablesItems.update(tableId, {
       name,
+      label,
       columns,
     });
 
@@ -211,6 +259,23 @@ async function saveEditedTable({ columns, name, changes }) {
   } catch (error) {
     console.error(error);
   }
+}
+async function saveEditRow(row) {
+  const items = toRaw(tableData.value.items);
+  if (editRowState.rowIndex !== -1) {
+    items[editRowState.rowIndex] = row;
+  } else {
+    items.push(row);
+  }
+  await dbStorage.tablesData
+    .where('tableId')
+    .equals(tableId)
+    .modify({
+      items: toRaw(items),
+      columnsIndex: toRaw(tableData.value.columnsIndex),
+    });
+  editRowState.rowIndex = -1;
+  editRowState.show = false;
 }
 function deleteRow(item) {
   const rowIndex = table.value.body.findIndex(({ $$id }) => $$id === item.$$id);
@@ -315,8 +380,7 @@ watch(tableData, () => {
     value: name,
     filterable: ['string', 'any'].includes(type),
   }));
-
-  dataTable.body = tableData.value.items.map((item, index) => ({
+  dataTable.body = tableData.value?.items?.map((item, index) => ({
     ...item,
     $$id: index + 1,
   }));

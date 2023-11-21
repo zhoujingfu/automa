@@ -5,6 +5,7 @@
         {{ t('common.storage') }}
       </h1>
       <a
+        v-if="store.settings.dev"
         href="https://docs.automa.site/reference/storage.html"
         title="Docs"
         class="ml-2 text-gray-600 dark:text-gray-200"
@@ -20,7 +21,7 @@
       <ui-tab value="variables">
         {{ t('workflow.variables.title', 2) }}
       </ui-tab>
-      <ui-tab value="credentials">
+      <ui-tab v-if="store.settings.dev" value="credentials">
         {{ t('credential.title', 2) }}
       </ui-tab>
     </ui-tabs>
@@ -44,7 +45,9 @@ import { useRoute, useRouter } from 'vue-router';
 import StorageTables from '@/components/newtab/storage/StorageTables.vue';
 import StorageVariables from '@/components/newtab/storage/StorageVariables.vue';
 import StorageCredentials from '@/components/newtab/storage/StorageCredentials.vue';
+import { useStore } from '@/stores/main';
 
+const store = useStore();
 const tabs = ['tables', 'variables', 'credentials'];
 
 const { t } = useI18n();

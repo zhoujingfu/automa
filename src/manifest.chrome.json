@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "name": "Automa",
+  "name": "招聘助手",
   "browser_action": {
     "default_popup": "popup.html",
     "default_icon": "icon-128.png"

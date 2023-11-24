@@ -27,7 +27,7 @@
   "scheduledWorkflow": {
     "title": "计划的工作流",
     "nextRun": "下次运行",
-    "active": "激活",
+    "active": "激活状态",
     "refresh": "刷新",
     "schedule": {
       "title": "计划",

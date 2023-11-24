@@ -13,6 +13,7 @@
           {{ t(`workflow.blocks.trigger.items.${trigger.type}`) }}
         </p>
         <v-remixicon
+          v-if="trigger.type !== 'manual'"
           name="riDeleteBin7Line"
           size="20"
           class="delete-btn cursor-pointer"
@@ -30,7 +31,7 @@
     <ui-popover class="mt-4">
       <template #trigger>
         <ui-button>
-          Add trigger
+          添加触发器
           <hr class="h-4 border-r" />
           <v-remixicon
             name="riArrowLeftSLine"

@@ -85,7 +85,7 @@ const tableHeaders = [
     filterable: true,
     text: t('common.name'),
     attrs: {
-      class: 'w-3/12 text-overflow',
+      class: 'w-2/12 text-overflow',
     },
   },
   {
@@ -93,7 +93,7 @@ const tableHeaders = [
     filterable: true,
     text: '备注',
     attrs: {
-      class: 'w-3/12 text-overflow',
+      class: 'w-5/12',
     },
   },
   {
@@ -186,6 +186,7 @@ watch(
     Object.assign(editState, {
       name: '',
       type: '',
+      label: '',
       value: '',
       show: false,
     });

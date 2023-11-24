@@ -103,11 +103,11 @@ const tableHeaders = [
       style: 'min-width: 200px',
     },
   },
-  {
-    value: 'rowsCount',
-    align: 'center',
-    text: t('storage.table.rowsCount'),
-  },
+  // {
+  //   value: 'rowsCount',
+  //   align: 'center',
+  //   text: t('storage.table.rowsCount'),
+  // },
   {
     value: 'actions',
     align: 'right',
@@ -118,7 +118,7 @@ const tableHeaders = [
 const items = useLiveQuery(() => dbStorage.tablesItems.reverse().toArray());
 
 function formatDate(date) {
-  return dayjs(date).format('DD MMM YYYY, hh:mm:ss A');
+  return dayjs(date).format('YYYY-MM-DD HH:mm:ss');
 }
 async function saveTable({ columns, name, label }) {
   try {

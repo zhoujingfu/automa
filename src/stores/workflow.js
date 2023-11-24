@@ -119,7 +119,7 @@ export const useWorkflowStore = defineStore('workflow', {
 
       let localWorkflows = workflows || {};
 
-      if (isFirstTime) {
+      if (isFirstTime && false) {
         localWorkflows = firstWorkflows.map((workflow) =>
           defaultWorkflow(workflow)
         );

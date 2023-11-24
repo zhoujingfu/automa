@@ -278,7 +278,7 @@
           </ui-tab-panel>
         </ui-tab-panels>
         <ui-card
-          v-if="workflowStore.isFirstTime"
+          v-if="workflowStore.isFirstTime && false"
           class="first-card relative mt-8 dark:text-gray-200"
         >
           <v-remixicon

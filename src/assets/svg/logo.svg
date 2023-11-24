@@ -1,5 +1,23 @@
-<svg width="600" height="600" viewBox="0 0 600 600" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect x="53" y="58" width="452" height="452" rx="80" fill="white" stroke="#181818" stroke-width="30" stroke-linejoin="round"/>
-<rect x="95" y="90" width="452" height="452" rx="80" fill="#18181B"/>
-<path d="M293.667 220.666C304.723 198.554 336.277 198.554 347.333 220.666L432.308 390.616C444.814 415.628 419.067 443.212 392.87 433.428C363.012 422.277 332.936 412.348 320.5 412.348C308.064 412.348 277.988 422.277 248.13 433.428C221.933 443.212 196.186 415.628 208.692 390.616L293.667 220.666Z" fill="white"/>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="482" height="482" viewBox="0 0 482 482">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="矩形_1" data-name="矩形 1" width="482" height="482" fill="none"/>
+    </clipPath>
+  </defs>
+  <g id="组_1" data-name="组 1" transform="translate(-9 -9)">
+    <g id="组_4" data-name="组 4" transform="translate(91 -1911)">
+      <g id="重复网格_1" data-name="重复网格 1" transform="translate(-82 1920)" clip-path="url(#clip-path)">
+        <g id="组_3" data-name="组 3" transform="translate(82 -1920)">
+          <g id="组_2" data-name="组 2">
+            <g id="组_1-2" data-name="组 1">
+              <g id="logo" transform="translate(-121 1877)">
+                <path id="路径_2" data-name="路径 2" d="M80,0H372a80,80,0,0,1,80,80V372a80,80,0,0,1-80,80H80A80,80,0,0,1,0,372V80A80,80,0,0,1,80,0Z" transform="translate(54 58)" fill="#ff8954" stroke="#ff704f" stroke-width="30"/>
+                <path id="路径_1" data-name="路径 1" d="M442.366,221.96c-.519,1.332,0,24.291,0,24.291L272.647,409.523H442.366c.131-.151,0,46.211,0,46.211s-260.7.048-262.285,0c-.49-2.438,0-27.616,0-27.616l167.445-156.5s-169.159-.256-167.445,0c.563-2.364-.343-49.336,0-50.245Z" transform="translate(-29.804 -53.061)" fill="#fff"/>
+              </g>
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
 </svg>

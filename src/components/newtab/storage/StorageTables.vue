@@ -103,11 +103,11 @@ const tableHeaders = [
       style: 'min-width: 200px',
     },
   },
-  // {
-  //   value: 'rowsCount',
-  //   align: 'center',
-  //   text: t('storage.table.rowsCount'),
-  // },
+  {
+    value: 'rowsCount',
+    align: 'center',
+    text: t('storage.table.rowsCount'),
+  },
   {
     value: 'actions',
     align: 'right',

@@ -184,7 +184,7 @@
             <v-remixicon name="riUploadLine" size="36" />
           </span>
         </div>
-        <ui-checkbox v-model="state.updateIfExists" class="mt-6 mb-4">
+        <ui-checkbox v-model="state.updateIfExists" class="mt-12 mb-4">
           {{ t('settings.backupWorkflows.restore.update') }}
         </ui-checkbox>
         <ui-button class="w-full" @click="restoreWorkflows">
@@ -245,7 +245,7 @@ const state = reactive({
   encrypt: false,
   lastBackup: null,
   loadingSync: false,
-  updateIfExists: false,
+  updateIfExists: true,
 });
 const backupState = reactive({
   ids: [],
@@ -344,6 +344,8 @@ async function backupWorkflows() {
     if (localBackupSchedule.includedItems.includes('storage:table')) {
       const tables = await dbStorage.tablesItems.toArray();
       payload.storageTables = JSON.stringify(tables);
+      const tablesData = await dbStorage.tablesData.toArray();
+      payload.storagetablesData = JSON.stringify(tablesData);
     }
     if (localBackupSchedule.includedItems.includes('storage:variables')) {
       const variables = await dbStorage.variables.toArray();
@@ -422,6 +424,11 @@ async function restoreWorkflows() {
       const storageTables = parseJSON(payload.storageTables, null);
       if (Array.isArray(storageTables)) {
         dbStorage.tablesItems.bulkPut(storageTables);
+      }
+
+      const storagetablesData = parseJSON(payload.storagetablesData, null);
+      if (Array.isArray(storagetablesData)) {
+        dbStorage.tablesData.bulkPut(storagetablesData);
       }
 
       const storageVariables = parseJSON(payload.storageVariables, null);

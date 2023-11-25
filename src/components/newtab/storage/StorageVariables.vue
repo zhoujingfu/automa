@@ -24,7 +24,7 @@
   >
     <template #item-actions="{ item }">
       <v-remixicon
-        v-if="item.name.indexOf('greet') == -1"
+        v-if="showEdit(item)"
         name="riPencilLine"
         class="mr-4 inline-block cursor-pointer"
         @click="editVariable(item)"
@@ -176,6 +176,15 @@ function saveVariable() {
         editState.show = false;
       });
   }
+}
+function showEdit({ name }) {
+  if (store.settings.dev) {
+    return true;
+  }
+  if (name.indexOf('greet_') !== -1) {
+    return false;
+  }
+  return true;
 }
 
 watch(

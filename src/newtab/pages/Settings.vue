@@ -44,16 +44,25 @@
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
+import { useStore } from '@/stores/main';
+
+const store = useStore();
 const { t } = useI18n();
 const router = useRouter();
 
-const menus = [
+let menus = [
   { id: 'general', path: '/settings', icon: 'riSettings3Line' },
   { id: 'backup', path: '/backup', icon: 'riDatabase2Line' },
   { id: 'editor', path: '/editor', icon: 'riMindMap' },
   { id: 'shortcuts', path: '/shortcuts', icon: 'riKeyboardLine' },
   { id: 'about', path: '/about', icon: 'riInformationLine' },
 ];
+
+console.log('store', store.settings);
+
+if (!store.settings.dev) {
+  menus = [{ id: 'backup', path: '/backup', icon: 'riDatabase2Line' }];
+}
 
 function onSelectChanged(value) {
   router.push(value);

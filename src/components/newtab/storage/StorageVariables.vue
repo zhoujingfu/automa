@@ -24,6 +24,7 @@
   >
     <template #item-actions="{ item }">
       <v-remixicon
+        v-if="item.name.indexOf('greet') == -1"
         name="riPencilLine"
         class="mr-4 inline-block cursor-pointer"
         @click="editVariable(item)"

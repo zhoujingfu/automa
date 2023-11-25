@@ -4,7 +4,7 @@
       {{ t('common.workflow', 2) }}
     </h1>
     <div class="mt-8 flex items-start">
-      <div class="sticky top-8 hidden w-60 lg:block">
+      <div v-if="store.settings.dev" class="sticky top-8 hidden w-60 lg:block">
         <div class="flex w-full">
           <ui-button
             :title="shortcut['action:new'].readable"
@@ -196,6 +196,7 @@
           <div class="grow"></div>
           <div class="mt-4 flex w-full items-center md:mt-0 md:w-auto">
             <span
+              v-if="store.settings.dev"
               v-tooltip:bottom.group="t('workflow.backupCloud')"
               class="mr-4"
             >
@@ -389,9 +390,11 @@ import WorkflowsHosted from '@/components/newtab/workflows/WorkflowsHosted.vue';
 import WorkflowsFolder from '@/components/newtab/workflows/WorkflowsFolder.vue';
 import WorkflowsUserTeam from '@/components/newtab/workflows/WorkflowsUserTeam.vue';
 import SharedPermissionsModal from '@/components/newtab/shared/SharedPermissionsModal.vue';
+import { useStore } from '@/stores/main';
 
 useGroupTooltip();
 
+const store = useStore();
 const { t } = useI18n();
 const toast = useToast();
 const dialog = useDialog();

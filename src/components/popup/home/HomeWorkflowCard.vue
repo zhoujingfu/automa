@@ -20,7 +20,7 @@
       name="riShieldKeyholeLine"
       class="text-green-600"
     />
-    <ui-popover v-else class="h-6">
+    <ui-popover v-else-if="store.settings.dev" class="h-6">
       <template #trigger>
         <button>
           <v-remixicon name="riMoreLine" />
@@ -62,7 +62,9 @@
 <script setup>
 import { useI18n } from 'vue-i18n';
 import dayjs from '@/lib/dayjs';
+import { useStore } from '@/stores/main';
 
+const store = useStore();
 const props = defineProps({
   workflow: {
     type: Object,

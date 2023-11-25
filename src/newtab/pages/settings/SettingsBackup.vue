@@ -1,6 +1,6 @@
 <template>
   <div class="max-w-xl">
-    <ui-card class="mb-12">
+    <ui-card v-if="store.settings.dev" class="mb-12">
       <h2 class="mb-2 font-semibold">
         {{ t('settings.backupWorkflows.cloud.title') }}
       </h2>
@@ -77,9 +77,14 @@
             <v-remixicon name="riDownloadLine" size="36" />
           </span>
         </div>
-        <ui-checkbox v-model="state.encrypt" class="mt-12 mb-4">
+        <ui-checkbox
+          v-if="store.settings.dev"
+          v-model="state.encrypt"
+          class="mt-12 mb-4"
+        >
           {{ t('settings.backupWorkflows.backup.encrypt') }}
         </ui-checkbox>
+        <div v-else class="mt-6 mb-4 h-[24px]"></div>
         <div class="flex items-center gap-2">
           <ui-popover @close="registerScheduleBackup">
             <template #trigger>
@@ -95,7 +100,7 @@
               <p class="mb-2 font-semibold">
                 {{ t('settings.backupWorkflows.backup.settings') }}
               </p>
-              <p>Also backup</p>
+              <p>同时备份</p>
               <div class="flex mt-1 flex-col gap-2">
                 <ui-checkbox
                   v-for="item in BACKUP_ITEMS_INCLUDES"
@@ -115,61 +120,63 @@
                   {{ item.name }}
                 </ui-checkbox>
               </div>
-              <p class="mt-4">
-                {{ t('settings.backupWorkflows.backup.schedule') }}
-              </p>
-              <template v-if="!downloadPermission.has.downloads">
-                <p class="text-gray-600 dark:text-gray-300 mt-1">
-                  Automa requires the "Downloads" permission for the schedule
-                  backup to work
+              <template v-if="store.settings.dev">
+                <p class="mt-4">
+                  {{ t('settings.backupWorkflows.backup.schedule') }}
                 </p>
-                <ui-button
-                  class="mt-2 w-full"
-                  @click="downloadPermission.request()"
-                >
-                  Allow "Downloads" permission
-                </ui-button>
-              </template>
-              <template v-else>
-                <ui-select
-                  v-model="localBackupSchedule.schedule"
-                  class="w-full mt-2"
-                >
-                  <option value="">Never</option>
-                  <option
-                    v-for="(value, key) in BACKUP_SCHEDULES"
-                    :key="key"
-                    :value="key"
+                <template v-if="!downloadPermission.has.downloads">
+                  <p class="text-gray-600 dark:text-gray-300 mt-1">
+                    Automa requires the "Downloads" permission for the schedule
+                    backup to work
+                  </p>
+                  <ui-button
+                    class="mt-2 w-full"
+                    @click="downloadPermission.request()"
                   >
-                    {{ value }}
-                  </option>
-                  <option value="custom">Custom</option>
-                </ui-select>
-                <template v-if="localBackupSchedule.schedule === 'custom'">
-                  <ui-input
-                    v-model="localBackupSchedule.customSchedule"
-                    label="Cron Expression"
+                    Allow "Downloads" permission
+                  </ui-button>
+                </template>
+                <template v-else>
+                  <ui-select
+                    v-model="localBackupSchedule.schedule"
                     class="w-full mt-2"
-                    placeholder="0 8 * * *"
+                  >
+                    <option value="">Never</option>
+                    <option
+                      v-for="(value, key) in BACKUP_SCHEDULES"
+                      :key="key"
+                      :value="key"
+                    >
+                      {{ value }}
+                    </option>
+                    <option value="custom">Custom</option>
+                  </ui-select>
+                  <template v-if="localBackupSchedule.schedule === 'custom'">
+                    <ui-input
+                      v-model="localBackupSchedule.customSchedule"
+                      label="Cron Expression"
+                      class="w-full mt-2"
+                      placeholder="0 8 * * *"
+                    />
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
+                      {{ getBackupScheduleCron() }}
+                    </p>
+                  </template>
+                  <ui-input
+                    v-if="localBackupSchedule.schedule !== ''"
+                    v-model="localBackupSchedule.folderName"
+                    label="Folder name"
+                    class="w-full mt-2"
+                    placeholder="backup-folder"
                   />
-                  <p className="text-sm text-gray-600 dark:text-gray-300">
-                    {{ getBackupScheduleCron() }}
+                  <p
+                    v-if="localBackupSchedule.lastBackup"
+                    class="text-gray-600 dark:text-gray-300 text-sm mt-4"
+                  >
+                    Last backup:
+                    {{ dayjs(localBackupSchedule.lastBackup).fromNow() }}
                   </p>
                 </template>
-                <ui-input
-                  v-if="localBackupSchedule.schedule !== ''"
-                  v-model="localBackupSchedule.folderName"
-                  label="Folder name"
-                  class="w-full mt-2"
-                  placeholder="backup-folder"
-                />
-                <p
-                  v-if="localBackupSchedule.lastBackup"
-                  class="text-gray-600 dark:text-gray-300 text-sm mt-4"
-                >
-                  Last backup:
-                  {{ dayjs(localBackupSchedule.lastBackup).fromNow() }}
-                </p>
               </template>
             </div>
           </ui-popover>
@@ -184,7 +191,7 @@
             <v-remixicon name="riUploadLine" size="36" />
           </span>
         </div>
-        <ui-checkbox v-model="state.updateIfExists" class="mt-12 mb-4">
+        <ui-checkbox v-model="state.updateIfExists" class="mt-6 mb-4">
           {{ t('settings.backupWorkflows.restore.update') }}
         </ui-checkbox>
         <ui-button class="w-full" @click="restoreWorkflows">
@@ -223,14 +230,16 @@ import { useWorkflowStore } from '@/stores/workflow';
 import { useHasPermissions } from '@/composable/hasPermissions';
 import { fileSaver, openFilePicker, parseJSON } from '@/utils/helper';
 import SettingsCloudBackup from '@/components/newtab/settings/SettingsCloudBackup.vue';
+import { useStore } from '@/stores/main';
 
+const store = useStore();
 const BACKUP_SCHEDULES = {
   '0 8 * * *': 'Every day',
   '0 8 * * 0': 'Every week',
 };
 const BACKUP_ITEMS_INCLUDES = [
-  { id: 'storage:table', name: 'Storage tables' },
-  { id: 'storage:variables', name: 'Storage variables' },
+  { id: 'storage:table', name: '表格' },
+  { id: 'storage:variables', name: '变量' },
 ];
 
 const { t } = useI18n();

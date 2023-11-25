@@ -4,7 +4,9 @@
     :data-workflow="workflow.id"
     draggable="true"
     class="local-workflow cursor-default select-none ring-accent"
-    @click="$router.push(`/workflows/${$event.id}`)"
+    @click="
+      store.settings.dev ? $router.push(`/workflows/${$event.id}`) : void 0
+    "
   >
     <template #header>
       <div class="mb-4 flex items-center">
@@ -29,7 +31,7 @@
         >
           <v-remixicon name="riPlayLine" />
         </button>
-        <ui-popover class="ml-2 h-6">
+        <ui-popover v-if="store.settings.dev" class="ml-2 h-6">
           <template #trigger>
             <button>
               <v-remixicon name="riMoreLine" />
@@ -90,7 +92,9 @@
 <script setup>
 import { useI18n } from 'vue-i18n';
 import SharedCard from '@/components/newtab/shared/SharedCard.vue';
+import { useStore } from '@/stores/main';
 
+const store = useStore();
 defineProps({
   workflow: {
     type: Object,

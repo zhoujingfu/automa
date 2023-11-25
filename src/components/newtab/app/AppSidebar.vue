@@ -48,15 +48,16 @@
         </a>
       </router-link>
     </div>
-    <hr class="my-4 w-8/12" />
+    <hr v-if="store.settings.dev" class="my-4 w-8/12" />
     <button
+      v-if="store.settings.dev"
       v-tooltip:right.group="$t('home.elementSelector.name')"
       class="focus:ring-0"
       @click="injectElementSelector"
     >
       <v-remixicon name="riFocus3Line" />
     </button>
-    <div class="grow"></div>
+    <div v-if="store.settings.dev" class="grow"></div>
     <ui-popover
       v-if="userStore.user"
       trigger="mouseenter click"
@@ -87,7 +88,12 @@
         </div>
       </div>
     </ui-popover>
-    <ui-popover trigger="mouseenter" placement="right" class="my-4">
+    <ui-popover
+      v-if="store.settings.dev"
+      trigger="mouseenter"
+      placement="right"
+      class="my-4"
+    >
       <template #trigger>
         <v-remixicon name="riGroupLine" />
       </template>
@@ -107,7 +113,11 @@
         </ui-list-item>
       </ui-list>
     </ui-popover>
-    <router-link v-tooltip:right.group="t('settings.menu.about')" to="/about">
+    <router-link
+      v-if="store.settings.dev"
+      v-tooltip:right.group="t('settings.menu.about')"
+      to="/about"
+    >
       <v-remixicon class="cursor-pointer" name="riInformationLine" />
     </router-link>
   </aside>
@@ -125,9 +135,11 @@ import { useGroupTooltip } from '@/composable/groupTooltip';
 import { communities } from '@/utils/shared';
 import { initElementSelector } from '@/newtab/utils/elementSelector';
 import emitter from '@/lib/mitt';
+import { useStore } from '@/stores/main';
 
 useGroupTooltip();
 
+const store = useStore();
 const { t } = useI18n();
 const toast = useToast();
 const router = useRouter();
@@ -147,12 +159,12 @@ const tabs = [
     path: '/workflows',
     shortcut: getShortcut('page:workflows', '/workflows'),
   },
-  {
-    id: 'packages',
-    icon: 'mdiPackageVariantClosed',
-    path: '/packages',
-    shortcut: '',
-  },
+  // {
+  //   id: 'packages',
+  //   icon: 'mdiPackageVariantClosed',
+  //   path: '/packages',
+  //   shortcut: '',
+  // },
   {
     id: 'schedule',
     icon: 'riTimeLine',
@@ -174,8 +186,8 @@ const tabs = [
   {
     id: 'settings',
     icon: 'riSettings3Line',
-    path: '/settings',
-    shortcut: getShortcut('page:settings', '/settings'),
+    path: '/backup',
+    shortcut: getShortcut('page:settings', '/backup'),
   },
 ];
 const hoverIndicator = ref(null);

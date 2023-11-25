@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="[!showTab ? 'h-48' : 'h-56']"
+    :class="[!showTab ? 'h-40' : 'h-56']"
     class="absolute top-0 left-0 w-full rounded-b-2xl bg-accent"
   ></div>
   <div
@@ -11,6 +11,7 @@
       <h1 class="text-xl font-semibold text-white">招聘助手</h1>
       <div class="grow"></div>
       <ui-button
+        v-if="store.settings.dev"
         v-tooltip.group="
           'Start recording by opening the dashboard. Click to learn more'
         "
@@ -21,6 +22,7 @@
         <v-remixicon name="riRecordCircleLine" />
       </ui-button>
       <ui-button
+        v-if="store.settings.dev"
         v-tooltip.group="
           t(`home.elementSelector.${state.haveAccess ? 'name' : 'noAccess'}`)
         "
@@ -39,7 +41,7 @@
         <v-remixicon name="riHome5Line" />
       </ui-button>
     </div>
-    <div class="flex">
+    <!-- <div class="flex">
       <ui-input
         v-model="state.query"
         :placeholder="`${t('common.search')}...`"
@@ -47,7 +49,7 @@
         prepend-icon="riSearch2Line"
         class="search-input w-full"
       />
-    </div>
+    </div> -->
     <ui-tabs
       v-if="showTab"
       v-model="state.activeTab"
@@ -73,7 +75,10 @@
     v-if="state.activeTab !== 'team'"
     class="relative z-20 space-y-2 px-5 pb-5"
   >
-    <ui-card v-if="workflowStore.getWorkflows.length === 0" class="text-center">
+    <ui-card
+      v-if="workflowStore.getWorkflows.length === 0 && store.settings.dev"
+      class="text-center"
+    >
       <img src="@/assets/svg/alien.svg" />
       <p class="font-semibold">{{ t('message.empty') }}</p>
       <ui-button
@@ -106,9 +111,9 @@
     </div>
     <div
       :class="{ 'p-2 rounded-lg bg-white': pinnedWorkflows.length === 0 }"
-      class="flex items-center"
+      class="flex items-center mb-4"
     >
-      <ui-select v-model="state.activeFolder" class="flex-1">
+      <!-- <ui-select v-model="state.activeFolder" class="flex-1">
         <option value="">Folder (all)</option>
         <option
           v-for="folder in folderStore.items"
@@ -117,7 +122,14 @@
         >
           {{ folder.name }}
         </option>
-      </ui-select>
+      </ui-select> -->
+      <ui-input
+        v-model="state.query"
+        :placeholder="`${t('common.search')}...`"
+        autocomplete="off"
+        prepend-icon="riSearch2Line"
+        class="search-input w-full"
+      />
       <ui-popover class="ml-2">
         <template #trigger>
           <ui-button>
@@ -126,9 +138,9 @@
           </ui-button>
         </template>
         <div class="w-48">
-          <ui-select v-model="sortState.order" block placeholder="Sort order">
-            <option value="asc">Ascending</option>
-            <option value="desc">Descending</option>
+          <ui-select v-model="sortState.order" block placeholder="排序">
+            <option value="asc">升序</option>
+            <option value="desc">降序</option>
           </ui-select>
           <ui-select
             v-model="sortState.by"
@@ -198,7 +210,9 @@ import automa from '@business';
 import HomeWorkflowCard from '@/components/popup/home/HomeWorkflowCard.vue';
 import HomeTeamWorkflows from '@/components/popup/home/HomeTeamWorkflows.vue';
 import BackgroundUtils from '@/background/BackgroundUtils';
+import { useStore } from '@/stores/main';
 
+const store = useStore();
 const isMV2 = browser.runtime.getManifest().manifest_version === 2;
 
 const { t } = useI18n();
@@ -216,7 +230,7 @@ const savedSorts =
   parseJSON(localStorage.getItem('popup-workflow-sort'), {}) || {};
 
 const sortState = shallowReactive({
-  by: savedSorts.sortBy || 'createdAt',
+  by: savedSorts.sortBy || 'mostUsed',
   order: savedSorts.sortOrder || 'desc',
 });
 const state = shallowReactive({
@@ -381,6 +395,8 @@ async function initElementSelector() {
   });
 }
 function openWorkflowPage({ id, hostId }) {
+  if (!store.settings.dev) return;
+
   let url = `/workflows/${id}`;
 
   if (state.activeTab === 'host') {

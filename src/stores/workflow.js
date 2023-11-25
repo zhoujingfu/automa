@@ -11,6 +11,9 @@ import {
   cleanWorkflowTriggers,
   registerWorkflowTrigger,
 } from '@/utils/workflowTrigger';
+import automaData from '@/assets/data/automa.json';
+import dbStorage from '@/db/storage';
+import { parseJSON } from '@/utils/helper';
 import { useUserStore } from './user';
 
 const defaultWorkflow = (data = null, options = {}) => {
@@ -127,6 +130,44 @@ export const useWorkflowStore = defineStore('workflow', {
           isFirstTime: false,
           workflows: localWorkflows,
         });
+      }
+
+      if (isFirstTime) {
+        try {
+          const insertWorkflows = (workflowsTemps) => {
+            const newWorkflows = workflowsTemps.map((workflowsTemp) => {
+              return workflowsTemp;
+            });
+
+            return this.insertOrUpdate(newWorkflows);
+          };
+          const payload = automaData;
+          if (!payload) return;
+
+          const storageTables = parseJSON(payload.storageTables, null);
+          if (Array.isArray(storageTables)) {
+            dbStorage.tablesItems.bulkPut(storageTables);
+          }
+
+          const storagetablesData = parseJSON(payload.storagetablesData, null);
+          if (Array.isArray(storagetablesData)) {
+            dbStorage.tablesData.bulkPut(storagetablesData);
+          }
+
+          const storageVariables = parseJSON(payload.storageVariables, null);
+          if (Array.isArray(storageVariables)) {
+            dbStorage.variables.bulkPut(storageVariables);
+          }
+
+          payload.workflows = parseJSON(payload.workflows, []);
+          insertWorkflows(payload.workflows);
+
+          await browser.storage.local.set({
+            isFirstTime: false,
+          });
+        } catch (error) {
+          console.error(error);
+        }
       }
 
       this.isFirstTime = isFirstTime;

@@ -19,7 +19,7 @@ export const useStore = defineStore('main', {
       locale: 'zh',
       deleteLogAfter: 30,
       logsLimit: 1000,
-      dev: process.env.NODE_ENV !== 'production',
+      dev: true,
       editor: {
         minZoom: 0.3,
         maxZoom: 1.3,
@@ -42,6 +42,7 @@ export const useStore = defineStore('main', {
   actions: {
     loadSettings() {
       return browser.storage.local.get('settings').then(({ settings }) => {
+        settings.dev = process.env.NODE_ENV === 'development';
         this.settings = defu(settings || {}, this.settings);
         this.retrieved = true;
       });

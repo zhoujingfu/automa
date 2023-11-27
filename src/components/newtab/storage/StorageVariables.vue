@@ -12,7 +12,7 @@
       class="ml-4"
       @click="editState.show = true"
     >
-      Add variable
+      添加变量
     </ui-button>
   </div>
   <ui-table
@@ -79,7 +79,6 @@ const store = useStore();
 const { t } = useI18n();
 const toast = useToast();
 const variables = useLiveQuery(() => dbStorage.variables.toArray());
-
 const tableHeaders = [
   {
     value: 'name',
@@ -177,11 +176,11 @@ function saveVariable() {
       });
   }
 }
-function showEdit({ name }) {
+function showEdit({ label }) {
   if (store.settings.dev) {
     return true;
   }
-  if (name.indexOf('greet_') !== -1) {
+  if (label.indexOf('临时') !== -1) {
     return false;
   }
   return true;

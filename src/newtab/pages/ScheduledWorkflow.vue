@@ -59,8 +59,8 @@
         </template>
         <template #item-action="{ item }">
           <button
-            v-if="item.type === 'interval' && false"
-            v-tooltip="'刷新时间'"
+            v-if="item.type === 'interval' || true"
+            v-tooltip="'刷新'"
             class="rounded-md text-gray-600 dark:text-gray-300"
             @click="refreshSchedule(item.id)"
           >

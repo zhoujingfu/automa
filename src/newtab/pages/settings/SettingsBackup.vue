@@ -126,14 +126,13 @@
                 </p>
                 <template v-if="!downloadPermission.has.downloads">
                   <p class="text-gray-600 dark:text-gray-300 mt-1">
-                    Automa requires the "Downloads" permission for the schedule
-                    backup to work
+                    需要下载权限才能进行计划备份
                   </p>
                   <ui-button
                     class="mt-2 w-full"
                     @click="downloadPermission.request()"
                   >
-                    Allow "Downloads" permission
+                    授予“下载”权限
                   </ui-button>
                 </template>
                 <template v-else>
@@ -199,6 +198,37 @@
         </ui-button>
       </div>
     </div>
+    <h2 class="mb-2 font-semibold mt-4">应用权限</h2>
+    <div class="flex space-x-4">
+      <div
+        class="w-6/12 rounded-lg border p-4 dark:border-gray-700 flex items-center justify-between"
+      >
+        <div>通知权限</div>
+        <ui-button v-if="notifyPermission.has.notifications">
+          已授权
+        </ui-button>
+        <ui-button
+          v-else
+          variant="accent"
+          @click="notifyPermission.request(true)"
+        >
+          授予权限
+        </ui-button>
+      </div>
+      <div
+        class="w-6/12 rounded-lg border p-4 dark:border-gray-700 flex items-center justify-between"
+      >
+        <div>下载权限</div>
+        <ui-button v-if="downloadPermission.has.downloads"> 已授权 </ui-button>
+        <ui-button
+          v-else
+          variant="accent"
+          @click="downloadPermission.request(true)"
+        >
+          授予权限
+        </ui-button>
+      </div>
+    </div>
   </div>
   <ui-modal
     v-model="backupState.modal"
@@ -248,6 +278,7 @@ const dialog = useDialog();
 const userStore = useUserStore();
 const workflowStore = useWorkflowStore();
 const downloadPermission = useHasPermissions(['downloads']);
+const notifyPermission = useHasPermissions(['notifications']);
 
 const state = reactive({
   lastSync: null,

@@ -19,7 +19,7 @@ export const useStore = defineStore('main', {
       locale: 'zh',
       deleteLogAfter: 30,
       logsLimit: 1000,
-      dev: true, // process.env.NODE_ENV === 'development';
+      dev: false, // process.env.NODE_ENV === 'development';
       editor: {
         minZoom: 0.3,
         maxZoom: 1.3,

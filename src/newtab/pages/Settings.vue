@@ -58,10 +58,8 @@ let menus = [
   { id: 'about', path: '/about', icon: 'riInformationLine' },
 ];
 
-console.log('store', store.settings);
-
 if (!store.settings.dev) {
-  menus = [{ id: 'backup', path: '/backup', icon: 'riDatabase2Line' }];
+  menus = [{ id: 'backup', path: '/backup', icon: 'riSettings3Line' }];
 }
 
 function onSelectChanged(value) {

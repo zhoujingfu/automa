@@ -79,7 +79,7 @@ export function startWorkflowExec(workflowData, options, isPopup = true) {
           browser.notifications.create(`logs:${id}`, {
             type: 'basic',
             iconUrl: browser.runtime.getURL('icon-128.png'),
-            title: status === 'success' ? 'Success' : 'Error',
+            title: status === 'success' ? '成功' : '错误',
             message: `${
               status === 'success' ? 'Successfully' : 'Failed'
             } to run the "${name}" workflow`,

@@ -162,7 +162,9 @@
                 />
               </router-link>
               <router-link
-                v-if="!isRunning && getBlockPath(item.blockId)"
+                v-if="
+                  !isRunning && getBlockPath(item.blockId) && store.settings.dev
+                "
                 v-show="currentLog.workflowId && item.blockId"
                 :to="getBlockPath(item.blockId)"
               >
@@ -298,7 +300,9 @@ import { countDuration, fileSaver } from '@/utils/helper';
 import { getBlocks } from '@/utils/getSharedData';
 import { dataExportTypes, messageHasReferences } from '@/utils/shared';
 import dayjs from '@/lib/dayjs';
+import { useStore } from '@/stores/main';
 
+const store = useStore();
 const SharedCodemirror = defineAsyncComponent(() =>
   import('@/components/newtab/shared/SharedCodemirror.vue')
 );

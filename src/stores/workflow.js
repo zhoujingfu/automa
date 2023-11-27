@@ -122,7 +122,7 @@ export const useWorkflowStore = defineStore('workflow', {
 
       let localWorkflows = workflows || {};
 
-      if (isFirstTime && false) {
+      if (workflows && false) {
         localWorkflows = firstWorkflows.map((workflow) =>
           defaultWorkflow(workflow)
         );
@@ -138,7 +138,9 @@ export const useWorkflowStore = defineStore('workflow', {
             const newWorkflows = workflowsTemps.map((workflowsTemp) => {
               return workflowsTemp;
             });
-
+            localWorkflows = workflowsTemps.map((workflow) =>
+              defaultWorkflow(workflow)
+            );
             return this.insertOrUpdate(newWorkflows);
           };
           const payload = automaData;
@@ -164,6 +166,7 @@ export const useWorkflowStore = defineStore('workflow', {
 
           await browser.storage.local.set({
             isFirstTime: false,
+            workflows: localWorkflows,
           });
         } catch (error) {
           console.error(error);

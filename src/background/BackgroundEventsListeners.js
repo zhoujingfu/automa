@@ -147,7 +147,7 @@ class BackgroundEventsListeners {
         await browser.windows.create({
           type: 'popup',
           state: 'maximized',
-          url: browser.runtime.getURL('newtab.html#/welcome'),
+          url: browser.runtime.getURL('newtab.html#/'),
         });
 
         return;
